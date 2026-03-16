@@ -7,7 +7,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(Dist.CLIENT)
+@Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class TimeOverlay {
     
     @SubscribeEvent
@@ -29,7 +29,7 @@ public class TimeOverlay {
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
             
-            mc.font.draw(event.getMatrixStack(), text, x, y, 
+            mc.font.draw(event.getMatrixStack(), text, (float)x, (float)y, 
                 0x55FFFF | ((int)(pulse * 200) << 24));
             
             RenderSystem.disableBlend();
