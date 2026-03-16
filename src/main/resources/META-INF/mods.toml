@@ -9,6 +9,7 @@ description='''
 Простой мод для визуального замедления времени при нажатии B.
 Работает только на клиенте!
 '''
+license="All Rights Reserved"
 
 [[dependencies.timeslowmod]]
     modId="forge"
