@@ -1,0 +1,20 @@
+package com.example.timeslowmod.network;
+
+import com.example.timeslowmod.TimeSlowMod;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
+
+public class PacketHandler {
+    private static final String PROTOCOL_VERSION = "1";
+    public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
+        new ResourceLocation(TimeSlowMod.MOD_ID, "main"),
+        () -> PROTOCOL_VERSION,
+        PROTOCOL_VERSION::equals,
+        PROTOCOL_VERSION::equals
+    );
+    
+    public static void register() {
+        // Пусто - только клиент
+    }
+}
