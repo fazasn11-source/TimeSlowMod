@@ -4,6 +4,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.eventbus.api.IEventBus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,7 +16,8 @@ public class TimeSlowMod {
     public static boolean isTimeSlowed = false;
 
     public TimeSlowMod() {
-        var modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        // Убрал var, использую явное объявление типа
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(this::clientSetup);
         MinecraftForge.EVENT_BUS.register(this);
     }
@@ -24,6 +26,6 @@ public class TimeSlowMod {
         ModKeybinds.register();
         MinecraftForge.EVENT_BUS.register(new TimeSlowHandler());
         MinecraftForge.EVENT_BUS.register(new TimeOverlay());
-        LOGGER.info("Time Slow Mod (Client Only) loaded!");
+        LOGGER.info("Time Slow Mod loaded!");
     }
 }
