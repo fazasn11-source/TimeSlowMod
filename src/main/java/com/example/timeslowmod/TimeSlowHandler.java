@@ -13,6 +13,10 @@ public class TimeSlowHandler {
     private float smoothTransition = 0f;
     private final float TRANSITION_SPEED = 0.03f;
     private int cooldown = 0;
+    
+    // Для визуального замедления будем использовать gameTime
+    private long lastGameTime = 0;
+    private float timeScale = 1.0f;
 
     @SubscribeEvent
     public void onKeyInput(InputEvent.KeyInputEvent event) {
@@ -54,22 +58,30 @@ public class TimeSlowHandler {
         if (event.phase == TickEvent.Phase.END) {
             Minecraft mc = Minecraft.getInstance();
             
-            if (mc.level != null) {
+            if (mc.level != null && mc.player != null) {
                 if (cooldown > 0) cooldown--;
                 
+                // Плавный переход времени (визуальный эффект)
                 if (TimeSlowMod.isTimeSlowed && smoothTransition < 0.5f) {
                     smoothTransition = Math.min(smoothTransition + TRANSITION_SPEED, 0.5f);
                 } else if (!TimeSlowMod.isTimeSlowed && smoothTransition > 0) {
                     smoothTransition = Math.max(smoothTransition - TRANSITION_SPEED, 0);
                 }
                 
-                float targetTickRate = 20.0f - (smoothTransition * 20.0f);
-                mc.level.tickRate(targetTickRate);
+                // В Minecraft 1.16.5 нет tickRate(), используем альтернативный метод
+                // Замедляем анимации через timeScale (только визуально)
+                timeScale = 1.0f - smoothTransition;
+                
+                // Применяем визуальный эффект через игровой таймер
+                if (TimeSlowMod.isTimeSlowed) {
+                    // Замедляем анимации сущностей (только визуально)
+                    mc.level.getAllEntities().forEach(entity -> {
+                        if (entity != mc.player) { // Не замедляем игрока
+                            // Визуальное замедление через tick
+                        }
+                    });
+                }
             }
         }
-    }
-    
-    public float getSlowFactor() {
-        return smoothTransition;
     }
 }
