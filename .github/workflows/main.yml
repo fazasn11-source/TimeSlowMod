@@ -1,0 +1,84 @@
+name: Build Time Slow Mod
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:  # Позволяет запускать вручную
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Шаг 1: Клонируем репозиторий
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      
+      # Шаг 2: Устанавливаем Java 8
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+      
+      # Шаг 3: Даем права на выполнение gradlew
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+      
+      # Шаг 4: Собираем мод
+      - name: Build with Gradle
+        run: ./gradlew build
+      
+      # Шаг 5: Загружаем результат
+      - name: Upload built JAR
+        uses: actions/upload-artifact@v2
+        with:
+          name: timeslowmod
+          path: build/libs/timeslowmod-*.jar
+          
+  # Создание релиза при пуше в main
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Download built JAR
+        uses: actions/download-artifact@v2
+        with:
+          name: timeslowmod
+          path: ./
+          
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release v${{ github.run_number }}
+          body: |
+            Автоматическая сборка Time Slow Mod
+            
+            ## Изменения:
+            - Последний коммит: ${{ github.event.head_commit.message }}
+            - Автор: ${{ github.event.head_commit.author.name }}
+            
+            ## Установка:
+            1. Скачай JAR файл ниже
+            2. Положи в папку mods
+            3. Играй с Forge 1.16.5
+          draft: false
+          prerelease: false
+          
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./timeslowmod-1.0.0.jar
+          asset_name: timeslowmod-1.0.0.jar
+          asset_content_type: application/java-archive
