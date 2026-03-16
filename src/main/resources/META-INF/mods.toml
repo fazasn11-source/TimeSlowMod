@@ -1,0 +1,23 @@
+modLoader="javafml"
+loaderVersion="[36,)"
+
+[[mods]]
+modId="timeslowmod"
+version="1.0.0"
+displayName="Time Slow Mod"
+description='''
+Простой мод для визуального замедления времени при нажатии B.
+Работает только на клиенте!
+'''
+
+[[dependencies.timeslowmod]]
+    modId="forge"
+    mandatory=true
+    versionRange="[36,)"
+    side="CLIENT"
+
+[[dependencies.timeslowmod]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.16.5]"
+    side="CLIENT"
